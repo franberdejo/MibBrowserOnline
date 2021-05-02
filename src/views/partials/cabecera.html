@@ -1,0 +1,28 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-house-user"></i>
+            Gestión
+        </a>
+    </div>
+</nav>
+<div>
+    <strong id="memoriaText">Uso de memoria:</strong>
+    <div id="progreso" class="progress" style="width: 50%;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow=""
+            aria-valuemin="0" aria-valuemax="100"
+            style="width: <%= 100 -(memoria[0].value / memoria[1].value * 100) %>%">
+            <%= 100 -(memoria[0].value / memoria[1].value * 100) %>%
+        </div>
+    </div>
+</div>
+<div>
+    <strong id="memoriaText">Uso de cpu:</strong>
+    <div id="progreso" class="progress" style="width: 50%; margin-left: 40px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow=""
+            aria-valuemin="0" aria-valuemax="100"
+            style="width: <%= 100 -(cpu.value) %>%">
+            <%= 100 -(cpu.value) %>%
+        </div>
+    </div>
+</div>

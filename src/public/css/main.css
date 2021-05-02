@@ -1,0 +1,7 @@
+body{
+    background: #555;  /* fallback for old browsers */
+    color: honeydew;
+}
+
+#memoriaText {display:inline-block;margin-right:10px; margin-left:10px;} 
+#progreso {display:inline-block; margin-top:13px;} 
