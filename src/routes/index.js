@@ -33,12 +33,6 @@ function respuesta(req, res){
 
     session.get (cabeceraOID, callbackGet);
 
-    session.trap (snmp.TrapType.LinkDown, function (error) {
-        if (error) {
-            console.error (error);
-        }
-    });
-
     res.render('index.html', {memoria, cpu})
 }
 

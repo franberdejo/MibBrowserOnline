@@ -43,9 +43,15 @@
 
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- Script -->
     <script>
         document.getElementById("ip").value = '192.168.1.189'
+
+        /*Al hacer click en el botón de enviar se realiza una peticion GET al endpoint /peticion enviando:
+            ip del equipo agente al que preguntar
+            operación a realizar: GET, GETNEXT, GETTABLE
+            mib a consultar
+            oid que queremos leer
+        */
         document.getElementById("enviar").onclick = function (){
             var ip = document.getElementById("ip").value
             var operacion = document.getElementById("operacion").value
@@ -54,6 +60,7 @@
 
             $.ajax({
                 url: '/peticion',
+                data:'ip='+ip+'&operacion='+operacion+'&mib='+mib+'&oid='+oid,
                 success: function (resultado){
                     console.log(resultado)
                 }

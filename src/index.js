@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 80
+const port = 3000
 const path = require('path')
 
 //motor de lectura paginas
@@ -20,6 +20,6 @@ app.use(express.static(path.join(__dirname, '/public')))
 
 //despliegue
 app.listen(port, () => console.log(
-    path.join("Servidor a la escucha")
+    path.join("Servidor a la escucha en el puerto " + port)
     )
 );
