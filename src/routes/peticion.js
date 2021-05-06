@@ -9,41 +9,30 @@ const snmp = require ("net-snmp");
 
 //La community, en SNMPv1 no hace falta cambiarla a otra diferente a public
 const comunidad = 'public';
-//La sesión que trataremos de establecer con el equipo con agente SNMP activo
-var session = snmp.createSession('192.168.1.189',comunidad);
-
-
-const cabeceraOID = ['1.3.6.1.4.1.2021.4.11.0', '1.3.6.1.4.1.2021.4.5.0', '1.3.6.1.4.1.2021.11.11.0'];
-
-//Variables de prueba
-var cpu;
-var memoria;
 
 //Las variables en las que guardaremos los datos recibidos en la petición AJAX
 var ip,operacion,mib,oid;
+//Respuesta del AJAX
+var resultadoConsulta
 
-session.get (cabeceraOID, callbackGet);
-
-
-/*
-
-*/
+//Funcion que recibe la respuesta get de snmp
 function callbackGet(error, varbinds){
     if (error) {
         console.error (error);
+        resultadoConsulta = error;
     } else {
-        cpu = varbinds[2];
-        memoria = varbinds;
+        resultadoConsulta = varbinds;
         for (var i = 0; i < varbinds.length; i++) {
             if (snmp.isVarbindError (varbinds[i])) {
-                //console.error (snmp.varbindError (varbinds[i]));
+                console.error (snmp.varbindError (varbinds[i]));
             } else {
-                //console.log (varbinds[i].oid + " = " + varbinds[i].value);
+                console.log (varbinds[i].oid + " = " + varbinds[i].value);
             }
         }
     }
 }
 
+//Funcion que responde a la peticion http AJAX
 function respuesta(req, res){
 
     //Asignamos a nuestras variables locales los valores pasados como parámetros al hacer click en 'enviar'
@@ -51,20 +40,21 @@ function respuesta(req, res){
     mib=req.query.mib;
     operacion=req.query.operacion;
     //Puede ser uno o varios en un array
-    oid=req.query.oid;
+    oid=[req.query.oid];
+    console.log("Ip peticion: " + ip + "\nMIB peticion: " + mib+ "\nOperacion peticion: " + operacion+ "\nOID peticion: " + oid);
 
-    session = snmp.createSession(ip,comunidad);
+    session = snmp.createSession(ip, comunidad);
     if(session){
-    //Tratamos de establecer la sesión SNMP con el equipo con la IP pasada como argumento.
-    session.get (oid, callbackGet);
+        //Tratamos de establecer la sesión SNMP con el equipo con la IP pasada como argumento.
+        session.get (oid, callbackGet);
+    }else{
+        resultadoConsulta = "No se ha podido establecer la conexion con el host";
     }
-
-
-    res.json(memoria)
-    console.log(req.query.mib);
+    res.json(resultadoConsulta);
+    //session.close();
 }
 
-//respuesta
+//A la escucha en la url /peticion
 router.get('/peticion', respuesta)
 
 module.exports = router;
