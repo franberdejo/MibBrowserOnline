@@ -25,7 +25,10 @@
         </div>
         <div class="input-group mb-3"
             style="width: 50%; margin-top: 13px; margin-top: 13px; margin-left: 13px; float: left;">
-            <button type="button" class="btn btn-secondary" id="enviar">Enviar</button>
+            <button class="btn btn-secondary" id="enviar" type="button">
+                <span class="visually-hidden" id="carga" role="status" aria-hidden="true"></span>
+                Enviar
+              </button>
             <select class="form-select" id="operacion" aria-label="Example select with button addon">
                 <option value="1">Get</option>
                 <option value="2">GetNext</option>
@@ -39,6 +42,13 @@
             </select>
             <input type="text" id="oid" class="form-control" placeholder="OID" aria-label="OID" aria-describedby="basic-addon1">
         </div>
+    </div>
+
+    <!-- pruebas -->
+    <div>
+        <p id='respuesta' class="visually-hidden">
+
+        </p>
     </div>
 
     <!-- Jquery -->
@@ -57,12 +67,20 @@
             var operacion = document.getElementById("operacion").value
             var mib = document.getElementById("mibs").value
             var oid = document.getElementById("oid").value
+            var respuesta = document.getElementById("respuesta")
+            var cargando = document.getElementById("carga")
+            cargando.className = 'spinner-border spinner-border-sm'
 
             $.ajax({
                 url: '/peticion',
                 data:'ip='+ip+'&operacion='+operacion+'&mib='+mib+'&oid='+oid,
                 success: function (resultado){
                     console.log(resultado)
+                    cargando.className = 'visually-hidden'
+                    //pruebas
+                    respuesta.className = ''
+                    respuesta.innerText = ''
+                    respuesta.innerText = 'oid = ' + resultado[0].oid + ' value = ' + resultado[0].value
                 }
             })
         }

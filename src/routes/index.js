@@ -24,9 +24,9 @@ function callbackGet(error, varbinds){
         memoria = varbinds;
         for (var i = 0; i < varbinds.length; i++) {
             if (snmp.isVarbindError (varbinds[i])) {
-                console.error (snmp.varbindError (varbinds[i]));
+                //console.error (snmp.varbindError (varbinds[i]));
             } else {
-                console.log (varbinds[i].oid + " = " + varbinds[i].value);
+                //console.log (varbinds[i].oid + " = " + varbinds[i].value);
             }
         }
     }

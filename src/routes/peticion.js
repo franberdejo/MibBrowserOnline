@@ -32,6 +32,13 @@ function callbackGet(error, varbinds){
     }
 }
 
+//Funcion que espera al resultado snmp para devolver la respuesta
+function espera (res){
+    res.json(resultadoConsulta);
+    resultadoConsulta = null;
+    //session.close();
+}
+
 //Funcion que responde a la peticion http AJAX
 function respuesta(req, res){
 
@@ -50,8 +57,8 @@ function respuesta(req, res){
     }else{
         resultadoConsulta = "No se ha podido establecer la conexion con el host";
     }
-    res.json(resultadoConsulta);
-    //session.close();
+    //esperamos a que nos devuelva los datos de snmp antes de responder
+    setTimeout(espera.bind(null, res), 1000);
 }
 
 //A la escucha en la url /peticion
