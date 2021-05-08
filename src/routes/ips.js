@@ -35,7 +35,6 @@ function respuesta(req, res){
     console.log("Escaneando equipos en la misma subred que "+subnet+'/'+24);
 
     var ip = req.query.ip.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
-    agents = []
 
     //IMPORTANTE, AHORA MISMO SÓLO FUNCIONA PARA REDES DE MÁSCARA 24
     for(let i=1;i<255;i++){
