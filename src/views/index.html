@@ -18,18 +18,20 @@
 <body>
     <%- include ('partials/cabecera.html')%>
     <div style="margin-left: 10px;">
-        <div class="input-group mb-3" style="width: 15%; margin-top: 13px; float: left;">
+        <!--Consulta IP-->
+        <div class="input-group mb-3" style="width: fit-content; margin-top: 13px; float: left;">
             <span class="input-group-text" id="basic-addon1">IP <i class="fas fa-sitemap" style="margin-left: 2px;"></i></span>
             <!--Cuando hagamos click en este botón realizaremos un escaneado de los equipos de la subred para encontrar los que tengan agente SNMP-->
-            <input type="text" id="ip" class="form-control" placeholder="192.168.1.189" aria-label="192.168.1.189"
-                aria-describedby="basic-addon1">
+            <select type="text" id="ip" class="form-select">
+            </select>
             <button class="btn btn-secondary" id="enviarip" type="button">
                 <span class="visually-hidden" id="cargaip" role="status" aria-hidden="true"></span>
-                Enviar
+                Scan
             </button>
         </div>
+        <!--Consulta SNMP-->
         <div class="input-group mb-3"
-            style="width: 50%; margin-top: 13px; margin-top: 13px; margin-left: 13px; float: left;">
+            style="width: fit-content; margin-top: 13px; margin-top: 13px; margin-left: 13px; float: left;">
             <button class="btn btn-secondary" id="enviar" type="button">
                 <span class="visually-hidden" id="carga" role="status" aria-hidden="true"></span>
                 Enviar
@@ -59,8 +61,6 @@
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        document.getElementById("ip").value = '192.168.1.189'
-
         /*Al hacer click en el botón de enviar se realiza una peticion GET al endpoint /peticion enviando:
             ip del equipo agente al que preguntar
             operación a realizar: GET, GETNEXT, GETTABLE
@@ -92,7 +92,6 @@
 
         /*Función ajax para pedir las IPs de los equipos con agente SNMP*/
         document.getElementById("enviarip").onclick = function (){
-            var respuesta = document.getElementById("respuesta")
             var cargando = document.getElementById("cargaip")
             cargando.className = 'spinner-border spinner-border-sm'
 
@@ -102,10 +101,9 @@
                 success: function (resultado){
                     console.log(resultado)
                     cargando.className = 'visually-hidden'
-                    //pruebas
-                    respuesta.className = ''
-                    respuesta.innerText = ''
-                    respuesta.innerText = 'Subnets = ' + resultado;
+                    resultado.forEach(element => {
+                        $('#ip').append('<option value="' + element + '">'+ element + '</option>')
+                    });
                 }
             })
         }
