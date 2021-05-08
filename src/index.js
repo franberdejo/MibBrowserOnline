@@ -13,6 +13,7 @@ app.set('views', path.join(__dirname, 'views'))
 //rutas
 app.use(require(path.join(__dirname,'/routes/index.js')))
 app.use(require(path.join(__dirname,'/routes/peticion.js')))
+app.use(require(path.join(__dirname,'/routes/ips.js')))
 
 
 //docs publicos
