@@ -20,8 +20,13 @@
     <div style="margin-left: 10px;">
         <div class="input-group mb-3" style="width: 15%; margin-top: 13px; float: left;">
             <span class="input-group-text" id="basic-addon1">IP <i class="fas fa-sitemap" style="margin-left: 2px;"></i></span>
+            <!--Cuando hagamos click en este botón realizaremos un escaneado de los equipos de la subred para encontrar los que tengan agente SNMP-->
             <input type="text" id="ip" class="form-control" placeholder="192.168.1.189" aria-label="192.168.1.189"
                 aria-describedby="basic-addon1">
+            <button class="btn btn-secondary" id="enviarip" type="button">
+                <span class="visually-hidden" id="cargaip" role="status" aria-hidden="true"></span>
+                Enviar
+            </button>
         </div>
         <div class="input-group mb-3"
             style="width: 50%; margin-top: 13px; margin-top: 13px; margin-left: 13px; float: left;">
@@ -81,6 +86,26 @@
                     respuesta.className = ''
                     respuesta.innerText = ''
                     respuesta.innerText = 'oid = ' + resultado[0].oid + ' value = ' + resultado[0].value
+                }
+            })
+        }
+
+        /*Función ajax para pedir las IPs de los equipos con agente SNMP*/
+        document.getElementById("enviarip").onclick = function (){
+            var respuesta = document.getElementById("respuesta")
+            var cargando = document.getElementById("cargaip")
+            cargando.className = 'spinner-border spinner-border-sm'
+
+            $.ajax({
+                url: '/ips',
+                data:'ip='+ip.value,
+                success: function (resultado){
+                    console.log(resultado)
+                    cargando.className = 'visually-hidden'
+                    //pruebas
+                    respuesta.className = ''
+                    respuesta.innerText = ''
+                    respuesta.innerText = 'Subnets = ' + resultado;
                 }
             })
         }

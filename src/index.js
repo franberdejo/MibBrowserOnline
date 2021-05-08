@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 80
+const port = 3000
 const path = require('path')
 
 //motor de lectura paginas
@@ -13,6 +13,7 @@ app.set('views', path.join(__dirname, 'views'))
 //rutas
 app.use(require(path.join(__dirname,'/routes/index.js')))
 app.use(require(path.join(__dirname,'/routes/peticion.js')))
+app.use(require(path.join(__dirname,'/routes/ips.js')))
 
 
 //docs publicos
