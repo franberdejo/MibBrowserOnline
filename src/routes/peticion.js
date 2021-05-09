@@ -2,10 +2,13 @@
     En este archivo se procesarán las peticiones llegadas desde la web
 
 */
-const express = require('express')
-const router = express.Router()
-const path = require('path')
+const express = require('express');
+const router = express.Router();
+const path = require('path');
 const snmp = require ("net-snmp");
+
+//cargamos mib
+const mib2 = require('../mib/RFC1213-MIB.json');
 
 //La community, en SNMPv1 no hace falta cambiarla a otra diferente a public
 const comunidad = 'public';
@@ -31,10 +34,27 @@ function callbackGet(error, varbinds){
         }
     }
 }
+/*
+    PETICIONES
+*/
+function getOID(mib, oid){
+    //comprobamos que la mib no es la de por defecto para no parsear el oid ya que no hace falta
+    if(mib != 4)
+        oid = [mib[oid].oid + '.0']; //por ahora no hace falta introducir .0 en la web por facilidad
+    session.get (oid, callbackGet);
+}
+
+function getNext(mib, oid){
+    //TODO
+}
+
+function getTable(mib, oid){
+    //TODO
+}
 
 //Funcion que espera al resultado snmp para devolver la respuesta
 function espera (res){
-    res.json(resultadoConsulta);
+    res.send(resultadoConsulta);
     resultadoConsulta = null;
     //session.close();
 }
@@ -44,16 +64,43 @@ function respuesta(req, res){
 
     //Asignamos a nuestras variables locales los valores pasados como parámetros al hacer click en 'enviar'
     ip= req.query.ip;
-    mib=req.query.mib;
-    operacion=req.query.operacion;
+    mib= parseInt(req.query.mib);
+    operacion= parseInt(req.query.operacion);
     //Puede ser uno o varios en un array
     oid=[req.query.oid];
     console.log("Ip peticion: " + ip + "\nMIB peticion: " + mib+ "\nOperacion peticion: " + operacion+ "\nOID peticion: " + oid);
 
     session = snmp.createSession(ip, comunidad);
+
     if(session){
-        //Tratamos de establecer la sesión SNMP con el equipo con la IP pasada como argumento.
-        session.get (oid, callbackGet);
+            //cargamos la mib correspondiente
+        switch (mib){
+            case 1:
+                mib = mib2;
+                break;
+            case 2:
+                //TODO decidir mib y cargarla
+                break;
+            case 3:
+                //TODO decidir mib y cargarla
+                break;
+            case 4:
+                //sin mib el valor del oid debrea ser numerico y completo
+                break;
+        }
+
+        //Filtramos la operacion y llamamos a la correspondiente
+        switch (operacion){
+            case 1:
+                getOID(mib, oid);
+                break;
+            case 2:
+                getNext(mib, oid);
+                break;
+            case 3:
+                getTable(mib, oid);
+                break;
+        }
     }else{
         resultadoConsulta = "No se ha podido establecer la conexion con el host";
     }

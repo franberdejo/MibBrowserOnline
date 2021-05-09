@@ -42,6 +42,7 @@ function respuesta(req, res){
         var equipo = [(ip[1]),(ip[2]),(ip[3]),i].join('.');
         sonda(equipo)
     }
+    //esperamos al scan para enviar la respuesta
     setTimeout(espera.bind(null, res), 1000);
 }
 
