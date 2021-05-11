@@ -19,11 +19,12 @@ function espera (res){
 
 //Funcion que comprueba si hay agente snmp enviandole una peticion
 function sonda (equipo){
+    
     session = snmp.createSession(equipo, 'public');
     session.get (['1.3.6.1.2.1.1.3.0'], function(error, varbinds){
         if(error){
         }else{
-            agents.push(equipo)
+            if(!(agents.includes(equipo))){agents.push(equipo);}
         }
     });
 }
@@ -31,10 +32,10 @@ function sonda (equipo){
 //Funcion que responde a la peticion http AJAX
 function respuesta(req, res){
     //Asignamos a nuestras variables locales los valores pasados como parámetros al hacer click en 'enviar'
-    subnet= req.query.ip;
+    subnet= "192.168.1.0";
     console.log("Escaneando equipos en la misma subred que "+subnet+'/'+24);
 
-    var ip = req.query.ip.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+    var ip = subnet.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
 
     //IMPORTANTE, AHORA MISMO SÓLO FUNCIONA PARA REDES DE MÁSCARA 24
     for(let i=1;i<255;i++){

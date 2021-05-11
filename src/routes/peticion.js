@@ -29,23 +29,39 @@ function callbackGet(error, varbinds){
             if (snmp.isVarbindError (varbinds[i])) {
                 console.error (snmp.varbindError (varbinds[i]));
             } else {
-                console.log (varbinds[i].oid + " = " + varbinds[i].value);
+                console.log(varbinds[i].type);
+                console.log (resultadoConsulta[i].oid + " = " + resultadoConsulta[i].value.toString('utf8'));
             }
         }
     }
 }
 /*
-    PETICIONES
+    PETICIONES GET
 */
 function getOID(mib, oid){
     //comprobamos que la mib no es la de por defecto para no parsear el oid ya que no hace falta
     if(mib != 4)
-        oid = [mib[oid].oid + '.0']; //por ahora no hace falta introducir .0 en la web por facilidad
+        oid = [mib[oid].oid+'.0']; //por ahora no hace falta introducir .0 en la web por facilidad
+
     session.get (oid, callbackGet);
 }
-
+/*
+    Autoexplicativo, realiza un getNext al oid u oids pasados como argumento en la consulta
+*/
 function getNext(mib, oid){
-    //TODO
+    if(mib != 4)
+    oid = [mib[oid].oid+'.0']; //por ahora no hace falta introducir .0 en la web por facilidad
+    session.getNext (oid, function (error, varbinds) {
+        if (error) {
+            console.error (error.toString ());
+            resultadoConsulta = error;
+        } else {
+            resultadoConsulta = varbinds;
+            for (var i = 0; i < varbinds.length; i++) {
+                console.log (resultadoConsulta[i].oid + "|" + resultadoConsulta[i].value.toString('utf8'));
+            }
+        }
+    });
 }
 
 function getTable(mib, oid){
