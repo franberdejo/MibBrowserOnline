@@ -29,6 +29,7 @@ function callbackGet(error, varbinds){
             if (snmp.isVarbindError (varbinds[i])) {
                 console.error (snmp.varbindError (varbinds[i]));
             } else {
+                if(resultadoConsulta[i].type == 4)
                 resultadoConsulta[i].value = resultadoConsulta[i].value.toString('utf8')
                 console.log (resultadoConsulta[i].oid + " = " + resultadoConsulta[i].value);
             }
@@ -58,7 +59,9 @@ function getNext(mib, oid){
         } else {
             resultadoConsulta = varbinds;
             for (var i = 0; i < varbinds.length; i++) {
+                if(resultadoConsulta[i].type == 4)
                 resultadoConsulta[i].value = resultadoConsulta[i].value.toString('utf8')
+
                 console.log (resultadoConsulta[i].oid + "|" + resultadoConsulta[i].value.toString('utf8'));
             }
         }
