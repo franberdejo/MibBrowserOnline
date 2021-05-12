@@ -29,8 +29,8 @@ function callbackGet(error, varbinds){
             if (snmp.isVarbindError (varbinds[i])) {
                 console.error (snmp.varbindError (varbinds[i]));
             } else {
-                console.log(varbinds[i].type);
-                console.log (resultadoConsulta[i].oid + " = " + resultadoConsulta[i].value.toString('utf8'));
+                resultadoConsulta[i].value = resultadoConsulta[i].value.toString('utf8')
+                console.log (resultadoConsulta[i].oid + " = " + resultadoConsulta[i].value);
             }
         }
     }
@@ -50,7 +50,7 @@ function getOID(mib, oid){
 */
 function getNext(mib, oid){
     if(mib != 4)
-    oid = [mib[oid].oid+'.0']; //por ahora no hace falta introducir .0 en la web por facilidad
+    oid = [mib[oid].oid];
     session.getNext (oid, function (error, varbinds) {
         if (error) {
             console.error (error.toString ());
@@ -58,6 +58,7 @@ function getNext(mib, oid){
         } else {
             resultadoConsulta = varbinds;
             for (var i = 0; i < varbinds.length; i++) {
+                resultadoConsulta[i].value = resultadoConsulta[i].value.toString('utf8')
                 console.log (resultadoConsulta[i].oid + "|" + resultadoConsulta[i].value.toString('utf8'));
             }
         }
@@ -70,7 +71,7 @@ function getTable(mib, oid){
 
 //Funcion que espera al resultado snmp para devolver la respuesta
 function espera (res){
-    res.send(resultadoConsulta);
+    res.json(resultadoConsulta);
     resultadoConsulta = null;
     //session.close();
 }
