@@ -1,6 +1,5 @@
 /*
     En este archivo se procesarán las peticiones llegadas desde la web
-
 */
 const express = require('express');
 const router = express.Router();
@@ -15,9 +14,52 @@ const comunidad = 'public';
 
 //Las variables en las que guardaremos los datos recibidos en la petición AJAX
 var ip,operacion,mib,oid;
-//Respuesta del AJAX
-var resultadoConsulta
 
+//Respuesta del AJAX
+var resultadoConsulta;
+
+
+function sortInt (a, b) {
+    if (a > b)
+        return 1;
+    else if (b > a)
+        return -1;
+    else
+        return 0;
+}
+
+function callbackTable (error, table) {
+    var ncol
+    var nfila
+    if (error) {
+        console.error (error.toString ());
+    } else {
+        resultadoConsulta = []
+        resultadoConsulta[1] = table
+        var o = 0;
+        for (index in table){
+            for (const key in table[index]) {
+                o++
+            }
+            ncol = o;
+            o=0
+        }
+    }
+    var nombres = [];
+    var lock = 0;
+    var iteraciones = ncol + 2;
+    for (const key in mib) {
+     if (key === oid[0])
+            lock = 1;
+      if(lock == 1){
+          nombres.push(key);
+          iteraciones -- ;
+         if(iteraciones == 0)
+             lock = 0;
+      }
+    }
+    resultadoConsulta[0] = nombres;
+}
 //Funcion que recibe la respuesta get de snmp
 function callbackGet(error, varbinds){
     if (error) {
@@ -69,11 +111,15 @@ function getNext(mib, oid){
 }
 
 function getTable(mib, oid){
-    //TODO
+    if(mib!=4){
+        oid=mib[oid].oid;
+    }
+    session.table(oid,callbackTable);
 }
 
 //Funcion que espera al resultado snmp para devolver la respuesta
 function espera (res){
+    //console.log(resultadoConsulta)
     res.json(resultadoConsulta);
     resultadoConsulta = null;
     //session.close();

@@ -54,7 +54,7 @@
 
     <!-- pruebas -->
     <div>
-        <p id='respuesta' class="visually-hidden">
+        <p  class="visually-hidden">
         </p>
     </div>
 
@@ -72,7 +72,6 @@
             var operacion = document.getElementById("operacion").value
             var mib = document.getElementById("mibs").value
             var oid = document.getElementById("oid").value
-            var respuesta = document.getElementById("respuesta")
             var cargando = document.getElementById("carga")
             cargando.className = 'spinner-border spinner-border-sm'
 
@@ -82,13 +81,32 @@
                 success: function (resultado){
                     console.log(resultado)
                     cargando.className = 'visually-hidden'
-                    //pruebas
-                    
-                    respuesta.className = ''
-                    respuesta.innerText = ''
-                    respuesta.innerText = 'oid = ' + resultado[0].oid + ' value = ' + resultado[0].value
+                    if(operacion == 3)
+                        muestraResultado(resultado)
                 }
             })
+        }
+
+        function muestraResultado(resultado){
+            var respuesta = document.getElementById("respuesta")
+            respuesta.className = 'table table-striped table-dark'
+            $("#filaCabeza").empty();
+            $("#tbody").empty();
+
+            //$('#filaCabeza').append('<th scope="col">' + '#' + '</th>')
+            for (const key in resultado[0]) {
+                if(key >= 2)
+                    $('#filaCabeza').append('<th scope="col">' + resultado[0][key] + '</th>')
+            }
+            var cadena = ''
+            for (const key in resultado[1]) {
+                cadena = cadena + '<tr>'
+                for (const variable in resultado[1][key]) {
+                    cadena = cadena + '<td>' + resultado[1][key][variable] + '</td>'
+                }
+                cadena = cadena + '</tr>'
+                $('#tbody').append(cadena)
+            }
         }
 
         /*Función ajax para pedir las IPs de los equipos con agente SNMP*/
@@ -103,12 +121,24 @@
                     console.log(resultado)
                     cargando.className = 'visually-hidden'
                     resultado.forEach(element => {
+                        $("#ip").empty();
                         $('#ip').append('<option value="' + element + '">'+ element + '</option>')
                     });
                 }
             })
         }
     </script>
+    <div style="clear: both;" >
+        <table class="visually-hidden" style="margin-left: 13px; width: max-content;"  id='respuesta'>
+        <thead id="thead">
+          <tr id="filaCabeza">
+          </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+      </table>
+    </div>
+    
 </body>
 
 </html>
