@@ -15,8 +15,8 @@ const comunidad = 'public';
 //Las variables en las que guardaremos los datos recibidos en la petición AJAX
 var ip,operacion,mib,oid;
 
-//Respuesta del AJAX
-var resultadoConsulta;
+//Respuesta del AJAX en el [0] va el nombre del oid y en [1] el resultado
+var resultadoConsulta = [];
 
 
 function sortInt (a, b) {
@@ -29,20 +29,20 @@ function sortInt (a, b) {
 }
 
 function callbackTable (error, table) {
+    resultadoConsulta = [];
     var ncol
     var nfila
     if (error) {
         console.error (error.toString ());
     } else {
-        resultadoConsulta = []
         resultadoConsulta[1] = table
-        var o = 0;
+        var Ncolum = 0;
         for (index in table){
             for (const key in table[index]) {
-                o++
+                Ncolum++
             }
-            ncol = o;
-            o=0
+            ncol = Ncolum;
+            Ncolum=0
         }
     }
     var nombres = [];
@@ -62,20 +62,25 @@ function callbackTable (error, table) {
 }
 //Funcion que recibe la respuesta get de snmp
 function callbackGet(error, varbinds){
+    resultadoConsulta = [];
     if (error) {
         console.error (error);
-        resultadoConsulta = error;
+        resultadoConsulta[1] = error;
     } else {
-        resultadoConsulta = varbinds;
+        resultadoConsulta[1] = varbinds;
         for (var i = 0; i < varbinds.length; i++) {
             if (snmp.isVarbindError (varbinds[i])) {
                 console.error (snmp.varbindError (varbinds[i]));
             } else {
-                if(resultadoConsulta[i].type == 4)
-                resultadoConsulta[i].value = resultadoConsulta[i].value.toString('utf8')
-                console.log (resultadoConsulta[i].oid + " = " + resultadoConsulta[i].value);
+                if(resultadoConsulta[1][i].type == 4)
+                resultadoConsulta[1][i].value = resultadoConsulta[1][i].value.toString('utf8')
+                console.log (resultadoConsulta[1][i].oid + " = " + resultadoConsulta[1][i].value);
             }
         }
+        for (const key in mib) {
+            if (key === oid[0])
+                resultadoConsulta[0] = key;
+            }
     }
 }
 /*
@@ -94,20 +99,7 @@ function getOID(mib, oid){
 function getNext(mib, oid){
     if(mib != 4)
     oid = [mib[oid].oid];
-    session.getNext (oid, function (error, varbinds) {
-        if (error) {
-            console.error (error.toString ());
-            resultadoConsulta = error;
-        } else {
-            resultadoConsulta = varbinds;
-            for (var i = 0; i < varbinds.length; i++) {
-                if(resultadoConsulta[i].type == 4)
-                resultadoConsulta[i].value = resultadoConsulta[i].value.toString('utf8')
-
-                console.log (resultadoConsulta[i].oid + "|" + resultadoConsulta[i].value.toString('utf8'));
-            }
-        }
-    });
+    session.getNext (oid, callbackGet);
 }
 
 function getTable(mib, oid){

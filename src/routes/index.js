@@ -4,7 +4,7 @@ const path = require('path')
 const snmp = require ("net-snmp");
 
 //conexion snmp
-const session = snmp.createSession ("sellamaconde.ddns.net", "public");
+const session = snmp.createSession ("192.168.1.189", "public");
 
 //oid del uso de memoria y cpu
 const cabeceraOID = ['1.3.6.1.4.1.2021.4.11.0', '1.3.6.1.4.1.2021.4.5.0', '1.3.6.1.4.1.2021.11.11.0'];
