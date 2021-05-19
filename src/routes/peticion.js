@@ -18,7 +18,19 @@ var ip,operacion,mib,oid;
 //Respuesta del AJAX en el [0] va el nombre del oid y en [1] el resultado
 var resultadoConsulta = [];
 
+function callbackSet(error,varbinds){
+    if (error) {
+        console.error (error.toString ());
+        resultadoConsulta=error;
+    } else {
+        resultadoConsulta = varbinds;
+        for (var i = 0; i < varbinds.length; i++) {
+            console.log (varbinds[i].oid + "|" + varbinds[i].value);
+        }
+    }
+}
 
+/*Para getTable*/
 function sortInt (a, b) {
     if (a > b)
         return 1;
@@ -83,13 +95,14 @@ function callbackGet(error, varbinds){
             }
     }
 }
+
 /*
     PETICIONES GET
 */
 function getOID(mib, oid){
     //comprobamos que la mib no es la de por defecto para no parsear el oid ya que no hace falta
     if(mib != 4)
-        oid = [mib[oid].oid+'.0']; //por ahora no hace falta introducir .0 en la web por facilidad
+        oid = [mib[oid].oid+'.0'];
 
     session.get (oid, callbackGet);
 }
@@ -109,6 +122,22 @@ function getTable(mib, oid){
     session.table(oid,callbackTable);
 }
 
+function setValor(mib, oid){
+    console.log(valorset +' '+mib[oid].oid+' '+mib[oid].syntax.type)
+    if(mib!=4){
+        var bindings = [
+        {
+            oid: mib[oid].oid,
+            type: snmp.ObjectType.OctetString,
+            value: valorset
+        }
+        ];
+    }
+
+
+    session.set (bindings, callbackSet);
+}
+
 //Funcion que espera al resultado snmp para devolver la respuesta
 function espera (res){
     //console.log(resultadoConsulta)
@@ -124,6 +153,7 @@ function respuesta(req, res){
     ip= req.query.ip;
     mib= parseInt(req.query.mib);
     operacion= parseInt(req.query.operacion);
+    valorset = req.query.valorset;
     //Puede ser uno o varios en un array
     oid=[req.query.oid];
     console.log("Ip peticion: " + ip + "\nMIB peticion: " + mib+ "\nOperacion peticion: " + operacion+ "\nOID peticion: " + oid);
@@ -157,6 +187,27 @@ function respuesta(req, res){
                 break;
             case 3:
                 getTable(mib, oid);
+                break;
+            case 4:
+                setValor(mib,oid);
+                /*var varbinds = [{
+                        oid: "1.3.6.1.2.1.1.4.0",
+                        type: snmp.ObjectType.OctetString,
+                        value: "jestebane01@gmail.com"
+                    }
+                ];
+                
+                session.set (varbinds, function (error, varbinds) {
+                    if (error) {
+                        console.error (error.toString ());
+                        resultadoConsulta = error;
+                    } else {
+                        for (var i = 0; i < varbinds.length; i++) {
+                            resultadoConsulta = varbinds;
+                            console.log (varbinds[i].oid + "|" + varbinds[i].value);
+                        }
+                    }
+                });*/
                 break;
         }
     }else{

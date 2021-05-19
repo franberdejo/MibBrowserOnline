@@ -42,6 +42,7 @@
                     <option value="1">Get</option>
                     <option value="2">GetNext</option>
                     <option value="3">GetTable</option>
+                    <option value="4">Set</option>
                 </select>
                 <select class="form-select" id="mibs" aria-label="Example select with button addon">
                     <option value="1">MIB-2</option>
@@ -50,8 +51,10 @@
                     <option value="4">----Otra----</option>
                 </select>
                 <input class="form-control" list="datalistOptions" id="oid" placeholder="OID...">
+                <input class="form-control" list="datalistOptions" id="nuevoset" placeholder="Nuevo valor (SET)">
                 <datalist id="datalistOptions">
                     <option value="sysName">
+                    <option value="sysContact">
                     <option value="ifTable">
                     <option value="apTable">
                     <option value="ipAddrTable">
@@ -65,7 +68,7 @@
         <script>
             /*Al hacer click en el botón de enviar se realiza una peticion GET al endpoint /peticion enviando:
                 ip del equipo agente al que preguntar
-                operación a realizar: GET, GETNEXT, GETTABLE
+                operación a realizar: GET, GETNEXT, GETTABLE o SET
                 mib a consultar
                 oid que queremos leer
             */
@@ -74,12 +77,13 @@
                 var operacion = document.getElementById("operacion").value
                 var mib = document.getElementById("mibs").value
                 var oid = document.getElementById("oid").value
+                var valorset = document.getElementById("nuevoset").value
                 var cargando = document.getElementById("carga")
                 cargando.className = 'spinner-border spinner-border-sm'
 
                 $.ajax({
                     url: '/peticion',
-                    data: 'ip=' + ip + '&operacion=' + operacion + '&mib=' + mib + '&oid=' + oid,
+                    data: 'ip=' + ip + '&operacion=' + operacion + '&mib=' + mib + '&oid=' + oid + '&valorset=' + valorset,
                     success: function (resultado) {
                         console.log(resultado)
                         cargando.className = 'visually-hidden'
