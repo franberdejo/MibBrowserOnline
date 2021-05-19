@@ -8,6 +8,8 @@ const snmp = require ("net-snmp");
 
 //cargamos mib
 const mib2 = require('../mib/RFC1213-MIB.json');
+const mibBRIDGE = require('../mib/BRIDGE-MIB.json');
+const mibRMON = require('../mib/RMON-MIB.json');
 
 //La community, en SNMPv1 no hace falta cambiarla a otra diferente a public
 const comunidad = 'public';
@@ -19,25 +21,20 @@ var ip,operacion,mib,oid;
 var resultadoConsulta = [];
 
 function callbackSet(error,varbinds){
+    resultadoConsulta = [];
     if (error) {
         console.error (error.toString ());
-        resultadoConsulta=error;
+        resultadoConsulta[1] = error;
     } else {
-        resultadoConsulta = varbinds;
+        resultadoConsulta[1] = varbinds;
         for (var i = 0; i < varbinds.length; i++) {
             console.log (varbinds[i].oid + "|" + varbinds[i].value);
         }
+        for (const key in mib) {
+            if (key === oid[0])
+                resultadoConsulta[0] = key;
+            }
     }
-}
-
-/*Para getTable*/
-function sortInt (a, b) {
-    if (a > b)
-        return 1;
-    else if (b > a)
-        return -1;
-    else
-        return 0;
 }
 
 function callbackTable (error, table) {
@@ -89,6 +86,8 @@ function callbackGet(error, varbinds){
                 console.log (resultadoConsulta[1][i].oid + " = " + resultadoConsulta[1][i].value);
             }
         }
+        if(mib == 4)
+        resultadoConsulta[0] = oid;
         for (const key in mib) {
             if (key === oid[0])
                 resultadoConsulta[0] = key;
@@ -122,19 +121,24 @@ function getTable(mib, oid){
     session.table(oid,callbackTable);
 }
 
-function setValor(mib, oid){
-    console.log(valorset +' '+mib[oid].oid+' '+mib[oid].syntax.type)
+function setValor(mib, oid, valorset){
     if(mib!=4){
         var bindings = [
         {
-            oid: mib[oid].oid,
+            oid: mib[oid].oid + '.0',
             type: snmp.ObjectType.OctetString,
             value: valorset
         }
         ];
+    }else{
+        var bindings = [
+            {
+                oid: '' + oid,
+                type: snmp.ObjectType.OctetString,
+                value: valorset
+            }
+            ];
     }
-
-
     session.set (bindings, callbackSet);
 }
 
@@ -167,10 +171,10 @@ function respuesta(req, res){
                 mib = mib2;
                 break;
             case 2:
-                //TODO decidir mib y cargarla
+                mib = mibBRIDGE;
                 break;
             case 3:
-                //TODO decidir mib y cargarla
+                mib = mibRMON;
                 break;
             case 4:
                 //sin mib el valor del oid debrea ser numerico y completo
@@ -189,25 +193,7 @@ function respuesta(req, res){
                 getTable(mib, oid);
                 break;
             case 4:
-                setValor(mib,oid);
-                /*var varbinds = [{
-                        oid: "1.3.6.1.2.1.1.4.0",
-                        type: snmp.ObjectType.OctetString,
-                        value: "jestebane01@gmail.com"
-                    }
-                ];
-                
-                session.set (varbinds, function (error, varbinds) {
-                    if (error) {
-                        console.error (error.toString ());
-                        resultadoConsulta = error;
-                    } else {
-                        for (var i = 0; i < varbinds.length; i++) {
-                            resultadoConsulta = varbinds;
-                            console.log (varbinds[i].oid + "|" + varbinds[i].value);
-                        }
-                    }
-                });*/
+                setValor(mib,oid, valorset);
                 break;
         }
     }else{

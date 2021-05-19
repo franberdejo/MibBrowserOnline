@@ -51,15 +51,16 @@
                     <option value="4">----Otra----</option>
                 </select>
                 <input class="form-control" list="datalistOptions" id="oid" placeholder="OID...">
-                <input class="form-control" list="datalistOptions" id="nuevoset" placeholder="Nuevo valor (SET)">
                 <datalist id="datalistOptions">
-                    <option value="sysName">
-                    <option value="sysContact">
-                    <option value="ifTable">
-                    <option value="apTable">
-                    <option value="ipAddrTable">
-                    <option value="sysUpTime">
+                    <% var i = 0 %>
+                    <% mibs.forEach(function(mib){ %>
+                        <% for(oid in mib){ %>
+                            <option value="<%= oid %>"> <%= nombres[i] %></option>
+                        <% } %>
+                        <% i++ %>
+                    <% }); %>
                 </datalist>
+                <input class="form-control" list="datalistOptions" id="nuevoset" placeholder="Nuevo valor (SET)">
             </div>
         </div>
 
