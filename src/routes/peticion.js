@@ -39,6 +39,7 @@ function callbackSet(error,varbinds){
 
 function callbackTable (error, table) {
     resultadoConsulta = [];
+    tabla = [];
     var ncol
     var nfila
     if (error) {
@@ -46,14 +47,16 @@ function callbackTable (error, table) {
     } else {
         resultadoConsulta[1] = table
         var Ncolum = 0;
-        for (index in table){
-            for (const key in table[index]) {
+        for (const key in resultadoConsulta[1]) {
+            for (const variable in resultadoConsulta[1][key]) {
                 Ncolum++
+                for (const a in resultadoConsulta[1][key][variable]){
+                    resultadoConsulta[1][key][variable] = resultadoConsulta[1][key][variable].toString('utf8')
+                }
             }
             ncol = Ncolum;
             Ncolum=0
         }
-    }
     var nombres = [];
     var lock = 0;
     var iteraciones = ncol + 2;
@@ -68,6 +71,7 @@ function callbackTable (error, table) {
       }
     }
     resultadoConsulta[0] = nombres;
+    }
 }
 //Funcion que recibe la respuesta get de snmp
 function callbackGet(error, varbinds){
