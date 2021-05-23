@@ -115,8 +115,8 @@
                     if (key >= 2)
                         $('#filaCabeza').append('<th scope="col">' + resultado[0][key] + '</th>')
                 }
-                var cadena = ''
                 for (const key in resultado[1]) {
+                    var cadena = ''
                     cadena = cadena + '<tr>'
                     for (const variable in resultado[1][key]) {
                         cadena = cadena + '<td>' + resultado[1][key][variable] + '</td>'
